@@ -1,6 +1,7 @@
 # http://search.cpan.org/~bdfoy/Test-Prereq/lib/Build.pm
+# https://logiclab.jira.com/wiki/display/OPEN/Test-Prereq
 
-# $Id: prerequisites.t 6927 2010-02-01 21:00:26Z jonasbn $
+# $Id: prerequisites.t 8051 2013-02-24 18:25:43Z jonasbn $
 
 use strict;
 use warnings;
