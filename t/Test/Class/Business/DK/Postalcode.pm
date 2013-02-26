@@ -1,6 +1,6 @@
 package Test::Class::Business::DK::Postalcode;
 
-# $Id: Postalcode.pm 7899 2012-04-10 17:41:21Z jonasbn $
+# $Id: Postalcode.pm 8064 2013-02-26 15:44:10Z jonasbn $
 
 use strict;
 use warnings;
@@ -31,11 +31,11 @@ sub test_validate : Test(5) {
         }
     }
     
-    is(scalar @invalids, 8825);
-    is(scalar @valids, 1174);
+    is(scalar @invalids, 8810);
+    is(scalar @valids, 1189);
 }
 
-sub test_create_regex : Test(2333) {
+sub test_create_regex : Test(3695) {
     my $postalcodes = get_all_postalcodes();
     my $regex = create_regex($postalcodes);
 
@@ -44,7 +44,7 @@ sub test_create_regex : Test(2333) {
     }   
 };
 
-sub test_build_tree : Test(1262) {
+sub test_build_tree : Test(1291) {
         
     my $tree = Tree::Simple->new();
     

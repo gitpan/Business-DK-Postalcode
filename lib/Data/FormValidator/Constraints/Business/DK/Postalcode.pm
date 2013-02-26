@@ -1,6 +1,6 @@
 package Data::FormValidator::Constraints::Business::DK::Postalcode;
 
-# $Id: Postalcode.pm 8043 2013-02-22 15:39:27Z jonasbn $
+# $Id: Postalcode.pm 8057 2013-02-24 18:46:50Z jonasbn $
 
 use strict;
 use warnings;
@@ -58,7 +58,7 @@ __END__
 
 =head1 NAME
 
-Data::FormValidator::Constraints::Business::DK::Postalcode - constraint for Danish Postalcodes
+Data::FormValidator::Constraints::Business::DK::Postalcode - constraint for Danish Postal codes
 
 =head1 VERSION
 
