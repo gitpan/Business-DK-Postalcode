@@ -1,4 +1,4 @@
-# $Id: get_all_data.t 8070 2013-02-26 16:11:16Z jonasbn $
+# $Id: get_all_data.t 8105 2013-07-02 19:38:40Z jonasbn $
 
 use strict;
 use warnings;
@@ -14,4 +14,4 @@ my $postalcodes_ref;
 ok($postalcodes_ref = get_all_data());
 
 #test 3
-is(scalar(@{$postalcodes_ref}), 1283);
+is(scalar(@{$postalcodes_ref}), 1254);

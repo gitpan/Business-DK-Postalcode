@@ -2,32 +2,32 @@
 use ExtUtils::MakeMaker;
 WriteMakefile
 (
-  'NAME' => 'Business::DK::Postalcode',
-  'VERSION_FROM' => 'lib/Business/DK/Postalcode.pm',
-  'PREREQ_PM' => {
-                   'Carp' => '0',
-                   'Data::Dumper' => 0,
-                   'Data::FormValidator' => 0,
-                   'English' => 0,
-                   'Env' => 0,
-                   'Exporter' => '0',
-                   'File::Spec' => 0,
-                   'Params::Validate' => '0',
-                   'Scalar::Util' => '0',
-                   'Test::Class' => 0,
-                   'Test::Exception' => 0,
-                   'Test::Kwalitee' => 0,
-                   'Test::More' => 0,
-                   'Test::Perl::Critic' => 0,
-                   'Test::Prereq::Build' => 0,
-                   'Test::Taint' => 0,
-                   'Tree::Simple' => '0'
-                 },
-  'INSTALLDIRS' => 'site',
-  'EXE_FILES' => [],
-  'PL_FILES' => {},
-  'test' => {
-              'TESTS' => 't/*.t t/.svn/*.t t/.svn/prop-base/*.t t/.svn/props/*.t t/.svn/text-base/*.t t/.svn/tmp/*.t t/.svn/tmp/prop-base/*.t t/.svn/tmp/props/*.t t/.svn/tmp/text-base/*.t t/Test/*.t t/Test/.svn/*.t t/Test/.svn/prop-base/*.t t/Test/.svn/props/*.t t/Test/.svn/text-base/*.t t/Test/.svn/tmp/*.t t/Test/.svn/tmp/prop-base/*.t t/Test/.svn/tmp/props/*.t t/Test/.svn/tmp/text-base/*.t t/Test/Class/*.t t/Test/Class/.svn/*.t t/Test/Class/.svn/prop-base/*.t t/Test/Class/.svn/props/*.t t/Test/Class/.svn/text-base/*.t t/Test/Class/.svn/tmp/*.t t/Test/Class/.svn/tmp/prop-base/*.t t/Test/Class/.svn/tmp/props/*.t t/Test/Class/.svn/tmp/text-base/*.t t/Test/Class/Business/*.t t/Test/Class/Business/.svn/*.t t/Test/Class/Business/.svn/prop-base/*.t t/Test/Class/Business/.svn/props/*.t t/Test/Class/Business/.svn/text-base/*.t t/Test/Class/Business/.svn/tmp/*.t t/Test/Class/Business/.svn/tmp/prop-base/*.t t/Test/Class/Business/.svn/tmp/props/*.t t/Test/Class/Business/.svn/tmp/text-base/*.t t/Test/Class/Business/DK/*.t t/Test/Class/Business/DK/.svn/*.t t/Test/Class/Business/DK/.svn/prop-base/*.t t/Test/Class/Business/DK/.svn/props/*.t t/Test/Class/Business/DK/.svn/text-base/*.t t/Test/Class/Business/DK/.svn/tmp/*.t t/Test/Class/Business/DK/.svn/tmp/prop-base/*.t t/Test/Class/Business/DK/.svn/tmp/props/*.t t/Test/Class/Business/DK/.svn/tmp/text-base/*.t t/Test/Class/Data/*.t t/Test/Class/Data/.svn/*.t t/Test/Class/Data/.svn/prop-base/*.t t/Test/Class/Data/.svn/props/*.t t/Test/Class/Data/.svn/text-base/*.t t/Test/Class/Data/.svn/tmp/*.t t/Test/Class/Data/.svn/tmp/prop-base/*.t t/Test/Class/Data/.svn/tmp/props/*.t t/Test/Class/Data/.svn/tmp/text-base/*.t t/Test/Class/Data/FormValidator/*.t t/Test/Class/Data/FormValidator/.svn/*.t t/Test/Class/Data/FormValidator/.svn/prop-base/*.t t/Test/Class/Data/FormValidator/.svn/props/*.t t/Test/Class/Data/FormValidator/.svn/text-base/*.t t/Test/Class/Data/FormValidator/.svn/tmp/*.t t/Test/Class/Data/FormValidator/.svn/tmp/prop-base/*.t t/Test/Class/Data/FormValidator/.svn/tmp/props/*.t t/Test/Class/Data/FormValidator/.svn/tmp/text-base/*.t t/Test/Class/Data/FormValidator/Constraints/*.t t/Test/Class/Data/FormValidator/Constraints/.svn/*.t t/Test/Class/Data/FormValidator/Constraints/.svn/prop-base/*.t t/Test/Class/Data/FormValidator/Constraints/.svn/props/*.t t/Test/Class/Data/FormValidator/Constraints/.svn/text-base/*.t t/Test/Class/Data/FormValidator/Constraints/.svn/tmp/*.t t/Test/Class/Data/FormValidator/Constraints/.svn/tmp/prop-base/*.t t/Test/Class/Data/FormValidator/Constraints/.svn/tmp/props/*.t t/Test/Class/Data/FormValidator/Constraints/.svn/tmp/text-base/*.t t/Test/Class/Data/FormValidator/Constraints/Business/*.t t/Test/Class/Data/FormValidator/Constraints/Business/.svn/*.t t/Test/Class/Data/FormValidator/Constraints/Business/.svn/prop-base/*.t t/Test/Class/Data/FormValidator/Constraints/Business/.svn/props/*.t t/Test/Class/Data/FormValidator/Constraints/Business/.svn/text-base/*.t t/Test/Class/Data/FormValidator/Constraints/Business/.svn/tmp/*.t t/Test/Class/Data/FormValidator/Constraints/Business/.svn/tmp/prop-base/*.t t/Test/Class/Data/FormValidator/Constraints/Business/.svn/tmp/props/*.t t/Test/Class/Data/FormValidator/Constraints/Business/.svn/tmp/text-base/*.t t/Test/Class/Data/FormValidator/Constraints/Business/DK/*.t t/Test/Class/Data/FormValidator/Constraints/Business/DK/.svn/*.t t/Test/Class/Data/FormValidator/Constraints/Business/DK/.svn/prop-base/*.t t/Test/Class/Data/FormValidator/Constraints/Business/DK/.svn/props/*.t t/Test/Class/Data/FormValidator/Constraints/Business/DK/.svn/text-base/*.t t/Test/Class/Data/FormValidator/Constraints/Business/DK/.svn/tmp/*.t t/Test/Class/Data/FormValidator/Constraints/Business/DK/.svn/tmp/prop-base/*.t t/Test/Class/Data/FormValidator/Constraints/Business/DK/.svn/tmp/props/*.t t/Test/Class/Data/FormValidator/Constraints/Business/DK/.svn/tmp/text-base/*.t'
-            }
-)
+          'NAME' => 'Business::DK::Postalcode',
+          'VERSION_FROM' => 'lib/Business/DK/Postalcode.pm',
+          'PREREQ_PM' => {
+                           'Carp' => '0',
+                           'Data::Dumper' => 0,
+                           'Data::FormValidator' => 0,
+                           'English' => 0,
+                           'Env' => 0,
+                           'Exporter' => '0',
+                           'File::Spec' => 0,
+                           'Params::Validate' => '0',
+                           'Scalar::Util' => '0',
+                           'Test::Class' => 0,
+                           'Test::Exception' => 0,
+                           'Test::Kwalitee' => 0,
+                           'Test::More' => 0,
+                           'Test::Perl::Critic' => 0,
+                           'Test::Prereq::Build' => 0,
+                           'Test::Taint' => 0,
+                           'Tree::Simple' => '0'
+                         },
+          'INSTALLDIRS' => 'site',
+          'EXE_FILES' => [],
+          'PL_FILES' => {},
+          'test' => {
+                      'TESTS' => 't/*.t t/.svn/*.t t/.svn/prop-base/*.t t/.svn/props/*.t t/.svn/text-base/*.t t/.svn/tmp/*.t t/.svn/tmp/prop-base/*.t t/.svn/tmp/props/*.t t/.svn/tmp/text-base/*.t t/Test/*.t t/Test/.svn/*.t t/Test/.svn/prop-base/*.t t/Test/.svn/props/*.t t/Test/.svn/text-base/*.t t/Test/.svn/tmp/*.t t/Test/.svn/tmp/prop-base/*.t t/Test/.svn/tmp/props/*.t t/Test/.svn/tmp/text-base/*.t t/Test/Class/*.t t/Test/Class/.svn/*.t t/Test/Class/.svn/prop-base/*.t t/Test/Class/.svn/props/*.t t/Test/Class/.svn/text-base/*.t t/Test/Class/.svn/tmp/*.t t/Test/Class/.svn/tmp/prop-base/*.t t/Test/Class/.svn/tmp/props/*.t t/Test/Class/.svn/tmp/text-base/*.t t/Test/Class/Business/*.t t/Test/Class/Business/.svn/*.t t/Test/Class/Business/.svn/prop-base/*.t t/Test/Class/Business/.svn/props/*.t t/Test/Class/Business/.svn/text-base/*.t t/Test/Class/Business/.svn/tmp/*.t t/Test/Class/Business/.svn/tmp/prop-base/*.t t/Test/Class/Business/.svn/tmp/props/*.t t/Test/Class/Business/.svn/tmp/text-base/*.t t/Test/Class/Business/DK/*.t t/Test/Class/Business/DK/.svn/*.t t/Test/Class/Business/DK/.svn/prop-base/*.t t/Test/Class/Business/DK/.svn/props/*.t t/Test/Class/Business/DK/.svn/text-base/*.t t/Test/Class/Business/DK/.svn/tmp/*.t t/Test/Class/Business/DK/.svn/tmp/prop-base/*.t t/Test/Class/Business/DK/.svn/tmp/props/*.t t/Test/Class/Business/DK/.svn/tmp/text-base/*.t t/Test/Class/Data/*.t t/Test/Class/Data/.svn/*.t t/Test/Class/Data/.svn/prop-base/*.t t/Test/Class/Data/.svn/props/*.t t/Test/Class/Data/.svn/text-base/*.t t/Test/Class/Data/.svn/tmp/*.t t/Test/Class/Data/.svn/tmp/prop-base/*.t t/Test/Class/Data/.svn/tmp/props/*.t t/Test/Class/Data/.svn/tmp/text-base/*.t t/Test/Class/Data/FormValidator/*.t t/Test/Class/Data/FormValidator/.svn/*.t t/Test/Class/Data/FormValidator/.svn/prop-base/*.t t/Test/Class/Data/FormValidator/.svn/props/*.t t/Test/Class/Data/FormValidator/.svn/text-base/*.t t/Test/Class/Data/FormValidator/.svn/tmp/*.t t/Test/Class/Data/FormValidator/.svn/tmp/prop-base/*.t t/Test/Class/Data/FormValidator/.svn/tmp/props/*.t t/Test/Class/Data/FormValidator/.svn/tmp/text-base/*.t t/Test/Class/Data/FormValidator/Constraints/*.t t/Test/Class/Data/FormValidator/Constraints/.svn/*.t t/Test/Class/Data/FormValidator/Constraints/.svn/prop-base/*.t t/Test/Class/Data/FormValidator/Constraints/.svn/props/*.t t/Test/Class/Data/FormValidator/Constraints/.svn/text-base/*.t t/Test/Class/Data/FormValidator/Constraints/.svn/tmp/*.t t/Test/Class/Data/FormValidator/Constraints/.svn/tmp/prop-base/*.t t/Test/Class/Data/FormValidator/Constraints/.svn/tmp/props/*.t t/Test/Class/Data/FormValidator/Constraints/.svn/tmp/text-base/*.t t/Test/Class/Data/FormValidator/Constraints/Business/*.t t/Test/Class/Data/FormValidator/Constraints/Business/.svn/*.t t/Test/Class/Data/FormValidator/Constraints/Business/.svn/prop-base/*.t t/Test/Class/Data/FormValidator/Constraints/Business/.svn/props/*.t t/Test/Class/Data/FormValidator/Constraints/Business/.svn/text-base/*.t t/Test/Class/Data/FormValidator/Constraints/Business/.svn/tmp/*.t t/Test/Class/Data/FormValidator/Constraints/Business/.svn/tmp/prop-base/*.t t/Test/Class/Data/FormValidator/Constraints/Business/.svn/tmp/props/*.t t/Test/Class/Data/FormValidator/Constraints/Business/.svn/tmp/text-base/*.t t/Test/Class/Data/FormValidator/Constraints/Business/DK/*.t t/Test/Class/Data/FormValidator/Constraints/Business/DK/.svn/*.t t/Test/Class/Data/FormValidator/Constraints/Business/DK/.svn/prop-base/*.t t/Test/Class/Data/FormValidator/Constraints/Business/DK/.svn/props/*.t t/Test/Class/Data/FormValidator/Constraints/Business/DK/.svn/text-base/*.t t/Test/Class/Data/FormValidator/Constraints/Business/DK/.svn/tmp/*.t t/Test/Class/Data/FormValidator/Constraints/Business/DK/.svn/tmp/prop-base/*.t t/Test/Class/Data/FormValidator/Constraints/Business/DK/.svn/tmp/props/*.t t/Test/Class/Data/FormValidator/Constraints/Business/DK/.svn/tmp/text-base/*.t'
+                    }
+        )
 ;
