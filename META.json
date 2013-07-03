@@ -48,7 +48,7 @@
    "provides" : {
       "Business::DK::Postalcode" : {
          "file" : "lib/Business/DK/Postalcode.pm",
-         "version" : "0.04"
+         "version" : "0.05"
       },
       "Data::FormValidator::Constraints::Business::DK::Postalcode" : {
          "file" : "lib/Data/FormValidator/Constraints/Business/DK/Postalcode.pm",
@@ -71,5 +71,5 @@
       "x_ProjectSite" : "http://logicLAB.jira.com/browse/BDKPST",
       "x_ProjectWiki" : "http://logiclab.jira.com/wiki/display/BDKPST/Home"
    },
-   "version" : "0.04"
+   "version" : "0.05"
 }
