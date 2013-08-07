@@ -10,6 +10,7 @@ META.json
 META.yml
 README
 t/00.load.t
+t/changes.t
 t/critic.t
 t/get_all_data.t
 t/get_all_postalcodes.t
