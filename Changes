@@ -1,10 +1,31 @@
 Changes file for Business::DK::Postalcode
 
-$Id: Changes,v 1.1 2006-04-23 10:21:24 jonasbn Exp $
-
 Project site changelog:
 
 http://logiclab.jira.com/browse/BDKPST#selectedTab=com.atlassian.jira.plugin.system.project%3Achangelog-panel
+
+0.08 2014-08-02
+
+- Maintenance release, update not necessary
+
+- Added example application in examples/
+
+- Added postdanmark script, script to monitor the main data source (downloadable Excel)
+  [BKDPST-24]
+
+- Added new subroutines:
+    - get_all_cities
+    - get_postalcode_from_city
+    - get_city_from_postalcode
+
+- Improved cleaning step in Build.PL [BDKPST-26]
+
+  https://logiclab.jira.com/browse/BDKPST-26
+
+- Added kwalitee.t implementing Test::Kwalitee tests [BDKPST-27]
+
+  https://logiclab.jira.com/browse/BDKPST-27
+
 
 0.07 2013-08-07
 
@@ -13,7 +34,7 @@ http://logiclab.jira.com/browse/BDKPST#selectedTab=com.atlassian.jira.plugin.sys
 - Updated with data from 9th. july 2013 [BDKPST-22]
 
 - Added changes.t implementing Test::CPAN::Changes test. Introducing dependency
-  on Test::CPAN::Changes [BDKPST-23]
+  on Test::CPAN::Changes, see also BDKPST-21 [BDKPST-23]
 
 
 0.06 2013-07-27
@@ -25,9 +46,9 @@ http://logiclab.jira.com/browse/BDKPST#selectedTab=com.atlassian.jira.plugin.sys
 
   Quest: http://questhub.io/realm/perl/quest/51f0fd8e18ba7dcf4b000040
   Spec: https://metacpan.org/module/CPAN::Changes::Spec
-  
+
   https://logiclab.jira.com/browse/BDKPST-21
-  
+
 
 0.05 2013-07-03
 

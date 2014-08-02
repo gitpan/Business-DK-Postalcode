@@ -1,15 +1,13 @@
 package Business::DK::Postalcode;
 
-# $Id: Postalcode.pm 2 2008-09-06 19:38:09Z jonasbn $
-
 use strict;
 use warnings;
 use Tree::Simple;
-use vars qw($VERSION @EXPORT_OK);
 use base qw(Exporter);
 use Params::Validate qw(validate_pos SCALAR ARRAYREF OBJECT);
+use utf8;
+use 5.010; #5.10.0
 
-use constant DEBUG                       => 0;
 use constant TRUE                        => 1;
 use constant FALSE                       => 0;
 use constant NUM_OF_DATA_ELEMENTS        => 6;
@@ -18,11 +16,13 @@ use constant NUM_OF_DIGITS_IN_POSTALCODE => 4;
 ## no critic (Variables::ProhibitPackageVars)
 our @postal_data = <DATA>;
 
+no strict 'refs';
+
 my $regex;
 
-$VERSION = '0.07';
-@EXPORT_OK
-    = qw(get_all_postalcodes get_all_data create_regex validate_postalcode validate);
+our $VERSION = '0.08';
+our @EXPORT_OK
+    = qw(get_all_postalcodes get_all_cities get_all_data create_regex validate_postalcode validate get_city_from_postalcode get_postalcode_from_city);
 
 # TODO: we have to disable this policy here for some reason?
 ## no critic (Subroutines::RequireArgUnpacking)
@@ -61,11 +61,61 @@ sub get_all_data {
     return \@postal_data;
 }
 
+sub get_all_cities {
+    my @cities = ();
+
+    _retrieve_cities( \@cities );
+
+    return \@cities;
+
+}
+
+sub get_city_from_postalcode {
+    my ($parameter_data) = @_;
+    my $city = '';
+
+    validate( @_, {
+        zipcode => { type => SCALAR }, });
+
+    my $postaldata = get_all_data();
+
+    foreach my $line (@{$postaldata}) {
+        my @entries = split /\t/x, $line, NUM_OF_DATA_ELEMENTS;
+
+        if ($entries[0] eq $parameter_data) {
+            $city = $entries[1];
+            last;
+        }
+    }
+
+    return $city;
+}
+
+sub get_postalcode_from_city {
+    my ($parameter_data) = @_;
+    my @postalcodes;
+
+    validate( @_, {
+        city => { type => SCALAR }, });
+
+    my $postaldata = get_all_data();
+
+    foreach my $line (@{$postaldata}) {
+        my @entries = split /\t/x, $line, NUM_OF_DATA_ELEMENTS;
+
+        if ($entries[1] =~ m/$parameter_data$/i) {
+            push @postalcodes, $entries[0];
+        }
+    }
+
+    return @postalcodes;
+}
+
 sub get_all_postalcodes {
     my ($parameter_data) = @_;
     my @postalcodes = ();
 
-    validate_pos( @_, { type => ARRAYREF, optional => 1 }, );
+    validate_pos( @_, { type => ARRAYREF, optional => TRUE }, );
 
     if ( not $parameter_data ) {
         @{$parameter_data} = @postal_data;
@@ -78,15 +128,31 @@ sub get_all_postalcodes {
     return \@postalcodes;
 }
 
+sub _retrieve_cities {
+    my ( $cities ) = @_;
+
+    #this is used internally, but we stick it in here just to make sure we
+    #get what we want
+    validate_pos( @_, { type => ARRAYREF }, );
+
+    foreach my $line (@postal_data) {
+        my @entries = split /\t/x, $line, NUM_OF_DATA_ELEMENTS;
+
+        push @{$cities}, $entries[1];
+    }
+
+    return;
+}
+
 sub _retrieve_postalcode {
     my ( $postalcodes, $string ) = @_;
 
     #this is used internally, but we stick it in here just to make sure we
     #get what we want
-    validate_pos( @_, { type => ARRAYREF }, { type => SCALAR }, );
+    validate_pos( @_, { type => ARRAYREF }, { type => SCALAR, regex => qr/[\w\t]+/, }, );
 
     ## no critic qw(RegularExpressions::RequireLineBoundaryMatching RegularExpressions::RequireExtendedFormatting RegularExpressions::RequireDotMatchAnything)
-    my @entries = split /(\t|\s{2,})/x, $string, NUM_OF_DATA_ELEMENTS;
+    my @entries = split /\t/x, $string, NUM_OF_DATA_ELEMENTS;
 
     if ($entries[0] =~ m{
         ^ #beginning of string
@@ -98,7 +164,7 @@ sub _retrieve_postalcode {
         push @{$postalcodes}, $entries[0];
     }
 
-    return;
+    return 1;
 }
 
 sub create_regex {
@@ -118,35 +184,31 @@ sub create_regex {
 
     my $generated_regex = [];
 
-    if ( $tree->isRoot && $tree->getChildCount > 1 ) {
+    my $no_of_children = $tree->getChildCount();
 
-        my $no_of_children = $tree->getChildCount();
-
-        foreach my $child ( $tree->getAllChildren() ) {
-            if ( $child->getIndex() < ( $tree->getChildCount() - 1 ) ) {
-                $child->insertSibling( $child->getIndex() + 1,
-                    Tree::Simple->new(q{|}) );
-            }
+    foreach my $child ( $tree->getAllChildren() ) {
+        if ( $child->getIndex() < ( $tree->getChildCount() - 1 ) ) {
+            $child->insertSibling( $child->getIndex() + 1,
+                Tree::Simple->new(q{|}) );
         }
-        $tree->insertChild( 0, Tree::Simple->new('(') );
-        $tree->addChild( Tree::Simple->new(')') );
     }
+    $tree->insertChild( 0, Tree::Simple->new('(') );
+    $tree->addChild( Tree::Simple->new(')') );
 
     $tree->traverse(
         sub {
             my ($_tree) = shift;
 
             #DEBUG section - outputs tree to STDERR
-            if (DEBUG) {
-                warn "\n";
-                $tree->traverse(
-                    sub {
-                        my ($traversal_tree) = @_;
-                        warn( "\t" x $traversal_tree->getDepth() )
-                            . $traversal_tree->getNodeValue() . "\n";
-                    }
-                );
-            }
+            # warn "\n";
+            # $tree->traverse(
+            #     sub {
+            #         my ($traversal_tree) = @_;
+            #         warn( "\t" x $traversal_tree->getDepth() )
+            #             . $traversal_tree->getNodeValue() . "\n";
+            #     }
+            # );
+
             my $no_of_children = $_tree->getChildCount();
 
             if ( $no_of_children > 1 ) {
@@ -227,7 +289,25 @@ sub _build_tree {
 
 1;
 
+=encoding UTF-8
+
 =pod
+
+=begin markdown
+
+[![CPAN version](https://badge.fury.io/pl/Business-DK-Postalcode.svg)](http://badge.fury.io/pl/Business-DK-Postalcode) 
+[![Build Status](https://travis-ci.org/jonasbn/bdkpst.svg?branch=master)](https://travis-ci.org/jonasbn/bdkpst) 
+[![Coverage Status](https://coveralls.io/repos/jonasbn/bdkpst/badge.png?branch=master)](https://coveralls.io/r/jonasbn/bdkpst?branch=master)
+
+=end markdown
+
+=begin html
+
+<a href="http://badge.fury.io/pl/Business-DK-Postalcode"><img src="https://badge.fury.io/pl/Business-DK-Postalcode.svg" alt="CPAN version" height="18"></a>
+<a href="https://travis-ci.org/jonasbn/bdkpst.svg?branch=master"><img src="https://travis-ci.org/jonasbn/bdkpst.svg?branch=master" alt="Travil build status"></a>
+<a href="https://coveralls.io/r/jonasbn/bdkpst?branch=master"><img src="https://coveralls.io/repos/jonasbn/bdkpst/badge.png?branch=master"></a>
+
+=end html
 
 =head1 NAME
 
@@ -235,40 +315,40 @@ Business::DK::Postalcode - validation of Danish postal codes
 
 =head1 VERSION
 
-This documentation describes version 0.03
+This documentation describes version 0.08
 
 =head1 SYNOPSIS
 
     # basic validation of string
     use Business::DK::Postalcode qw(validate);
-    
+
     if (validate($postalcode)) {
         print "We have a valid Danish postalcode\n";
     } else {
-        print "Not a valid Danish postalcode\n";
+        warn "Not a valid Danish postalcode\n";
     }
 
 
     # basic validation of string, using less intrusive subroutine
     use Business::DK::Postalcode qw(validate_postalcode);
-    
+
     if (validate_postalcode($postalcode)) {
         print "We have a valid Danish postal code\n";
     } else {
-        print "Not a valid Danish postal code\n";
+        warn "Not a valid Danish postal code\n";
     }
 
-    
+
     # using the untainted return value
     use Business::DK::Postalcode qw(validate_postalcode);
-    
+
     if (my $untainted = validate_postalcode($postalcode)) {
         print "We have a valid Danish postal code: $untainted\n";
     } else {
-        print "Not a valid Danish postal code\n";
+        warn "Not a valid Danish postal code\n";
     }
 
-    
+
     # extracting a regex for validation of Danish postal codes
     use Business::DK::Postalcode qw(create_regex);
 
@@ -277,52 +357,114 @@ This documentation describes version 0.03
     if ($postalcode =~ m/$regex/) {
         print "We have a valid Danish postalcode\n";
     } else {
-        print "Not a valid Danish postalcode\n";
+        warn "Not a valid Danish postalcode\n";
     }
 
 
     # All postal codes for use outside this module
     use Business::DK::Postalcode qw(get_all_postalcodes);
-    
+
     my @postalcodes = @{get_all_postalcodes()};
 
-    
+
     # All postal codes and data for use outside this module
     use Business::DK::Postalcode qw(get_all_data);
-    
+
     my $postalcodes = get_all_data();
-    
+
     foreach (@{postalcodes}) {
         printf
             'postalcode: %s city: %s street/desc: %s company: %s province: %d country: %d', split /\t/, $_, 6;
     }
 
-
 =head1 FEATURES
 
 =over
 
-=item * Providing list of Danish postal codes and related area names 
+=item * Providing list of Danish postal codes and related area names
+
+=item * Look up methods for Danish postal codes for web applications and the like
 
 =back
 
 =head1 DESCRIPTION
 
-=head2 Data
+This distribution is not the original resource for the included data, but simply
+acts as a simple distribution for Perl use. The central source is monitored so this
+distribution can contain the newest data. The monitor script (F<postdanmark.pl>) is
+included in the distribution.
+
+The data are converted for inclusion in this module. You can use different extraction
+subroutines depending on your needs:
 
 =over
 
-=item * city
+=item * L</get_all_data>, to retrieve all data, data description below in L</Data>.
 
-=item * street/desc
+=item * L</get_all_postalcodes>, to retrieve all postal codes
 
-=item * company
+=item * L</get_all_citites>, to retieve all cities
 
-=item * province
+=item * L</get_postalcode_from_city>, to retrieve one or more postal codes from a city name
 
-=item * country
+=item * L</get_city_from_postalcode>, to retieve a city name from a postal code
 
 =back
+
+=head2 Data
+
+Here follows a description of the included data, based on the description from
+the original source and the authors interpretation of the data, including
+details on the distribution of the data.
+
+=head3 city name
+
+A non-unique, case-sensite representation of a city name in Danish.
+
+=head3 street/description
+
+This field is either a streetname or g a description, is it only provided for
+a few special records.
+
+=head3 company name
+
+This field is only provided for a few special records.
+
+=head3 province
+
+This field is a bit special and it's use is expected to be related to ditribution
+all entries inside Copenhagen are marked as 'False' in this column and 'True' for
+all entries outside Copenhagen - and this of course with exceptions. The data are
+included since they are a part of the original data.
+
+=head3 country
+
+Since the original source contains data on 3 different countries:
+
+=over
+
+=item * Denmark
+
+=item * Greenland
+
+=item * Faroe Islands
+
+=back
+
+Only the data representing Denmark has been included in this distribtion, so this
+field is always containing a one.
+
+For access to the data on Greenland or Faroe Islands please refer to: L<Business::GL::Postalcode> 
+and L<Business::FO::Postalcode> respectfully.
+
+=head2 Encoding
+
+The data distributed are in Danish for descriptions and names and these are encoded in UTF-8.
+
+=head1 EXAMPLES
+
+A web application example is included in the examples directory following this distribution
+or available at L<https://metacpan.org/pod/Business::DK::Postalcode>.
 
 =head1 SUBROUTINES AND METHODS
 
@@ -333,37 +475,145 @@ A simple validator for Danish postal codes.
 Takes a string representing a possible Danish postal code and returns either
 B<1> or B<0> indicating either validity or invalidity.
 
+    my $rv = validate(2665);
+
+    if ($rv == 1) {
+        print "We have a valid Danish postal code\n";
+    } ($rv == 0) {
+        print "Not a valid Danish postal code\n";
+    }
+
 =head2 validate_postalcode
 
 A less intrusive subroutine for import. Acts as a wrapper of L</validate>.
+
+    my $rv = validate_postalcode(2300);
+
+    if ($rv) {
+        print "We have a valid Danish postal code\n";
+    } else {
+        print "Not a valid Danish postal code\n";
+    }
 
 =head2 get_all_data
 
 Returns a reference to a a list of strings, separated by tab characters. See
 L</Data> for a description of the fields.
 
+    use Business::DK::Postalcode qw(get_all_data);
+
+    my $postalcodes = get_all_data();
+
+    foreach (@{postalcodes}) {
+        printf
+            'postalcode: %s city: %s street/desc: %s company: %s province: %d country: %d', split /\t/, $_, 6;
+    }
+
 =head2 get_all_postalcodes
 
+Takes no parameters.
+
 Returns a reference to an array containing all valid Danish postal codes.
+
+    use Business::DK::Postalcode qw(get_all_postalcodes);
+
+    my $postalcodes = get_all_postalcodes;
+
+    foreach my $postalcode (@{$postalcodes}) { ... }
+
+=head2 get_all_cities
+
+Takes no parameters.
+
+Returns a reference to an array containing all Danish city names having a postal code.
+
+    use Business::DK::Postalcode qw(get_all_cities);
+
+    my $cities = get_all_cities;
+
+    foreach my $city (@{$cities}) { ... }
+
+Please note that this data source used in this distribution by no means is authorative 
+when it comes to cities located in Denmark, it might have all cities listed, but
+unfortunately also other post distribution data.
+
+=head2 get_city_from_postalcode
+
+Takes a string representing a Danish postal code.
+
+Returns a single string representing the related city name or an empty string indicating nothing was found.
+
+    use Business::DK::Postalcode qw(get_city_from_postalcode);
+
+    my $zipcode = '2300';
+
+    my $city = get_city_from_postalcode($zipcode);
+
+    if ($city) {
+        print "We found a city for $zipcode\n";
+    } else {
+        warn "No city found for $zipcode";
+    }
+
+=head2 get_postalcode_from_city
+
+Takes a string representing a Danish city name.
+
+Returns a reference to an array containing zero or more postal codes related to that city name. Zero indicates nothing was found.
+
+Please note that city names are not unique, hence the possibility of a list of postal codes.
+
+    use Business::DK::Postalcode qw(get_postalcode_from_city);
+
+    my $city = 'København K';
+
+    my $postalcodes = get_postalcode_from_city($city);
+
+    if (scalar @{$cities} == 1) {
+        print "$city is unique\n";
+    } elsif (scalar @{$cities} > 1) {
+        warn "$city is NOT unique\n";
+    } else {
+        die "$city not found\n";
+    }
 
 =head2 create_regex
 
 This method returns a generated regular expression for validation of a string
 representing a possible Danish postal code.
 
+    use Business::DK::Postalcode qw(create_regex);
+
+    my $regex_ref = ${create_regex()};
+
+    if ($postalcode =~ m/$regex/) {
+        print "We have a valid Danish postalcode\n";
+    } else {
+        print "Not a valid Danish postalcode\n";
+    }
+
 =head1 PRIVATE SUBROUTINES AND METHODS
+
+=head2 _retrieve_cities
+
+Takes a reference to an array based on the DATA section and return a reference
+to an array containing only city names.
 
 =head3 _retrieve_postalcode
 
-Internal method
+Takes a reference to an array based on the DATA section and return a reference
+to an array containing only postal codes.
 
 =head3 _build_tree
 
-Internal method to assist L<create_regex> in generating the regular expression.
+Internal method to assist L</create_regex> in generating the regular expression.
 
-Takes a L<Tree::Simple> object and a reference to an array of data elements.
+Takes a L<https://metacpan.org/pod/Tree::Simple> object and a reference to an array of data elements.
 
 =head1 DIAGNOSTICS
+
+There are not special diagnostics apart from the ones related to the different
+subroutines.
 
 =head1 CONFIGURATION AND ENVIRONMENT
 
@@ -373,11 +623,30 @@ This distribution requires no special configuration or environment.
 
 =over
 
-=item * L<Exporter>
+=item * L<https://metacpan.org/pod/Carp> (core)
 
-=item * L<Tree::Simple>
+=item * L<https://metacpan.org/pod/Exporter> (core)
 
-=item * L<Params::Validate>
+=item * L<https://metacpan.org/pod/Tree::Simple>
+
+=item * L<https://metacpan.org/pod/Params::Validate>
+
+=back
+
+=head2 Test
+
+Please note that the above list does not reflect requirements for:
+
+=over
+
+=item * Additional components in this distribution, see F<lib/>. Additional
+components list own requirements
+
+=item * Test and build system, please see: F<Build.PL> for details
+
+=item * Requirements for scripts in the F<bin/> directory
+
+=item * Requirements for examples in the F<examples/> directory
 
 =back
 
@@ -385,15 +654,23 @@ This distribution requires no special configuration or environment.
 
 There are no known bugs at this time.
 
+The data source used in this distribution by no means is authorative when it
+comes to cities located in Denmark, it might have all cities listed, but
+unfortunately also other post distribution data.
+
 =head1 BUG REPORTING
 
 Please report issues via CPAN RT:
 
-  http://rt.cpan.org/NoAuth/Bugs.html?Dist=Business-DK-Postalcode
+=over
 
-or by sending mail to
+=item * Web (RT): L<http://rt.cpan.org/NoAuth/Bugs.html?Dist=Business-DK-Postalcode>
 
-  bug-Business-DK-Postalcode@rt.cpan.org
+=item * Web (Github): L<https://github.com/jonasbn/bdkpst/issues>
+
+=item * Email (RT): L<bug-Business-DK-Postalcode@rt.cpan.org>
+
+=back
 
 =head1 INCOMPATIBILITIES
 
@@ -403,61 +680,61 @@ There are no known incompatibilities at this time.
 
 =head2 Perl::Critic
 
-This version of the code is complying with Perl::Critic a severity: 1
+This version of the code is complying with L<https://metacpan.org/pod/Perl::Critic> a severity: 1
 
 The following policies have been disabled.
 
 =over
 
-=item * L<Perl::Critic::Policy::Variables::ProhibitPackageVars>
+=item * L<https://metacpan.org/pod/Perl::Critic::Policy::Variables::ProhibitPackageVars>
 
 Disabled locally using 'no critic' pragma.
 
 The module  uses a package variable as a cache, this might not prove usefull in
 the long term, so when this is adressed and this might address this policy.
 
-=item * L<Perl::Critic::Policy::Subroutines::RequireArgUnpacking>
+=item * L<https://metacpan.org/pod/Perl::Critic::Policy::Subroutines::RequireArgUnpacking>
 
 Disabled locally using 'no critic' pragma.
 
-This policy is violated when using L<Params::Validate> at some point this will
+This policy is violated when using L<https://metacpan.org/pod/Params::Validate> at some point this will
 be investigated further, this might be an issue due to referral to @_.
 
-=item * L<Perl::Critic::Policy::RegularExpressions::RequireLineBoundaryMatching>
+=item * L<https://metacpan.org/pod/Perl::Critic::Policy::RegularExpressions::RequireLineBoundaryMatching>
 
 Disabled locally using 'no critic' pragma.
 
 This is disabled for some two basic regular expressions.
 
-=item * L<Perl::Critic::Policy::RegularExpressions::RequireExtendedFormatting>
+=item * L<https://metacpan.org/pod/Perl::Critic::Policy::RegularExpressions::RequireExtendedFormatting>
 
 Disabled locally using 'no critic' pragma.
 
 This is disabled for some two basic regular expressions.
 
-=item * L<Perl::Critic::Policy::RegularExpressions::RequireDotMatchAnything>
+=item * L<https://metacpan.org/pod/Perl::Critic::Policy::RegularExpressions::RequireDotMatchAnything>
 
 Disabled locally using 'no critic' pragma.
 
 This is disabled for some two basic regular expressions.
 
-=item * L<Perl::Critic::Policy::ValuesAndExpressions::ProhibitConstantPragma>
+=item * L<https://metacpan.org/pod/Perl::Critic::Policy::ValuesAndExpressions::ProhibitConstantPragma>
 
 Constants are good, - see the link below.
 
 =item * L<https://logiclab.jira.com/wiki/display/OPEN/Perl-Critic-Policy-ValuesAndExpressions-ProhibitConstantPragma>
 
-=item * L<Perl::Critic::Policy::Documentation::RequirePodAtEnd>
+=item * L<https://metacpan.org/pod/Perl::Critic::Policy::Documentation::RequirePodAtEnd>
 
 This one interfers with our DATA section, perhaps DATA should go before POD,
 well it is not important so I have disabled the policy.
 
-=item * L<Perl::Critic::Policy::ControlStructures::ProhibitCStyleForLoops>
+=item * L<https://metacpan.org/pod/Perl::Critic::Policy::ControlStructures::ProhibitCStyleForLoops>
 
 This would require a re-write of part of the code. Currently I rely on use of the iterator in the F<for> loop, so it would require significant
 changes.
 
-=item * L<Perl::Critic::Policy::Documentation::RequirePodLinksIncludeText>
+=item * L<https://metacpan.org/pod/Perl::Critic::Policy::Documentation::RequirePodLinksIncludeText>
 
 Temporarily disabled, marked for follow-up
 
@@ -467,14 +744,15 @@ Please see F<t/perlcriticrc> for details.
 
 =head2 TEST COVERAGE
 
-Test coverage report is generated using L<Devel::Cover> via L<Module::Build>.
+Test coverage report is generated using L<https://metacpan.org/pod/Devel::Cover> via L<https://metacpan.org/pod/Module::Build>,
+for the version described in this documentation (See L<VERSION>).
 
     ---------------------------- ------ ------ ------ ------ ------ ------ ------
     File                           stmt   bran   cond    sub    pod   time  total
     ---------------------------- ------ ------ ------ ------ ------ ------ ------
-    ...Business/DK/Postalcode.pm  100.0   87.5   33.3  100.0  100.0   99.4   97.0
-    ...Business/DK/Postalcode.pm  100.0  100.0    n/a  100.0  100.0    0.6  100.0
-    Total                         100.0   90.6   33.3  100.0  100.0  100.0   97.8
+    ...Business/DK/Postalcode.pm  100.0  100.0    n/a  100.0  100.0   98.7  100.0
+    ...Business/DK/Postalcode.pm  100.0  100.0    n/a  100.0  100.0    1.2  100.0
+    Total                         100.0  100.0    n/a  100.0  100.0  100.0  100.0
     ---------------------------- ------ ------ ------ ------ ------ ------ ------
 
     $ ./Build testcover
@@ -483,37 +761,45 @@ Test coverage report is generated using L<Devel::Cover> via L<Module::Build>.
 
 =over
 
-=item * L<Geo::Postcodes::DK>
+=item * Main data source: L<http://www.postdanmark.dk/da/Documents/Lister/postnummerfil-excel.xls>
 
-=item * L<http://www.postdanmark.dk/cms/da-dk/eposthuset/postservices/aendringer_postnumre_1.htm>
+=item * Information resource on data source: L<http://www.postdanmark.dk/cms/da-dk/eposthuset/postservices/aendringer_postnumre_1.htm>
 
-=item * L<https://metacpan.org/module/Regexp::Common::zip#RE-zip-Denmark->
+=item * Alternative implementation: L<https://metacpan.org/pod/Geo::Postcodes::DK>
 
-=item * L<Business::DK::CVR>
+=item * Alternative validation: L<https://metacpan.org/module/Regexp::Common::zip#RE-zip-Denmark->
 
-=item * L<Business::DK::CPR>
+=item * Related complementary implementation: L<https://metacpan.org/pod/Business::GL::Postalcode>
 
-=item * L<Business::DK::FI>
+=item * Related complementary implementation: L<https://metacpan.org/pod/Business::FO::Postalcode>
 
-=item * L<Business::DK::PO>
+=item * Related implementation, same author: L<https://metacpan.org/pod/Business::DK::CVR>
+
+=item * Related implementation, same author: L<https://metacpan.org/pod/Business::DK::CPR>
+
+=item * Related implementation, same author: L<https://metacpan.org/pod/Business::DK::FI>
+
+=item * Related implementation, same author: L<https://metacpan.org/pod/Business::DK::PO>
 
 =back
 
-=head1 Resources
+=head1 RESOURCES
 
 =over
+
+=item * MetaCPAN: L<https://metacpan.org/pod/Business::DK::Postalcode>
 
 =item * Website: L<http://logicLAB.jira.com/browse/BDKPST>
 
 =item * Bugtracker: L<http://rt.cpan.org/NoAuth/Bugs.html?Dist=Business-DK-Postalcode>
 
-=item * SVN repository: L<http://logicLAB.jira.com/svn/BDKPST>
+=item * Git repository: L<https://github.com/jonasbn/bdkpst>
 
 =back
 
 =head1 TODO
 
-Please see the project F<TODO> file.
+Please see the project F<TODO> file, or the bugtracker (RT), website or issues resource at Github.
 
 =head1 AUTHOR
 
@@ -522,7 +808,7 @@ Jonas B. Nielsen, (jonasbn) - C<< <jonasbn@cpan.org> >>
 =head1 MOTIVATION
 
 Back in 2006 I was working on a project where I needed to do some presentation
-and validation of Danish postal codes. I looked at Regex::Common::Zip (see: L<https://metacpan.org/module/Regexp::Common::zip#RE-zip-Denmark->)
+and validation of Danish postal codes. I looked at L<https://metacpan.org/pod/Regex::Common::Zip>
 
 The implementation at the time of writing looked as follows:
 
@@ -530,7 +816,7 @@ The implementation at the time of writing looked as follows:
     # Postal codes of the form: 'DDDD', with the first
     # digit representing the distribution region, the
     # second digit the distribution district. Postal
-    # codes do not start with a zero. Postal codes 
+    # codes do not start with a zero. Postal codes
     # starting with '39' are in Greenland.
 
 This pattern holds some issues:
@@ -538,11 +824,19 @@ This pattern holds some issues:
 =over
 
 =item * Doing some fast math you can see that you will allow 9000 valid postal
-codes where the exact number is 1254 and 0 is actually allowed for a set of
-postal codes used by the postal service in Denmark
+codes where the number should be about 1254
+
+=item * 0 is actually allowed for a set of postal codes used by the postal service
+in Denmark, in some situations these should perhaps be allowed as valid data
 
 =item * Greenland specified as starting with '39' is not a part of Denmark, but
-should be under Greenland and the ISO code 'GL'
+should be under Greenland and the ISO code 'GL', see also:
+
+=over
+
+=item * L<https://metacpan.org/pod/Business::GL::Postalcode>
+
+=back
 
 =back
 
@@ -552,7 +846,7 @@ which could generate the pattern for me based on a finite data set.
 
 =head1 COPYRIGHT
 
-Business-DK-Postalcode is (C) by Jonas B. Nielsen, (jonasbn) 2006-2013
+Business-DK-Postalcode is (C) by Jonas B. Nielsen, (jonasbn) 2006-2014
 
 =head1 LICENSE
 
@@ -560,7 +854,7 @@ Business-DK-Postalcode and related is released under the Artistic License 2.0
 
 =over
 
-=item * http://www.opensource.org/licenses/Artistic-2.0
+=item * L<http://www.opensource.org/licenses/Artistic-2.0>
 
 =back
 

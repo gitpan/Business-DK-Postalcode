@@ -1,7 +1,5 @@
 # Build.PL for Business-DK-Postalcode
 
-# $Id: Build.PL,v 1.3 2008-09-09 19:17:21 jonasbn Exp $
-
 use strict;
 use warnings;
 
@@ -38,18 +36,21 @@ my $build = Module::Build->new(
         'Tree::Simple'     => '0',
         'Params::Validate' => '0',
         'Scalar::Util'     => '0',
+        'perl'             => '5.10.0',
     },
     meta_merge => {
         resources => {
             homepage => 'http://logicLAB.jira.com/browse/BDKPST',
             bugtracker =>
                 'http://rt.cpan.org/NoAuth/Bugs.html?Dist=Business-DK-Postalcode',
-            repository => 'http://logicLAB.jira.com/svn/BDKPST',
+            repository => 'https://github.com/jonasbn/bdkpst',
             ProjectChangelog =>
                 'http://logiclab.jira.com/browse/BDKPST#selectedTab=com.atlassian.jira.plugin.system.project%3Achangelog-panel',
             ProjectSite => 'http://logicLAB.jira.com/browse/BDKPST',
             ProjectWiki => 'http://logiclab.jira.com/wiki/display/BDKPST/Home',
         }
     },
+    add_to_cleanup => [ qw(MANIFEST MANIFEST.bak README *.gz META.*) ],
 );
+
 $build->create_build_script();

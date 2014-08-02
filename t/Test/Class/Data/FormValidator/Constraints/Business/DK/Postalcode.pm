@@ -1,6 +1,6 @@
 package Test::Class::Data::FormValidator::Constraints::Business::DK::Postalcode;
 
-# $Id: Postalcode.pm 7899 2012-04-10 17:41:21Z jonasbn $
+# $Id$
 
 use strict;
 use warnings;

@@ -1,8 +1,8 @@
 #!/usr/local/bin/perl -T
 
-# $Id: runtests.t 7899 2012-04-10 17:41:21Z jonasbn $
+# $Id$
 
-# $HeadURL: https://logiclab.jira.com/svn/BDKPST/trunk/t/runtests.t $
+# $HeadURL$
 
 use strict;
 use warnings;
