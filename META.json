@@ -50,11 +50,11 @@
    "provides" : {
       "Business::DK::Postalcode" : {
          "file" : "lib/Business/DK/Postalcode.pm",
-         "version" : "0.08"
+         "version" : "0.09"
       },
       "Data::FormValidator::Constraints::Business::DK::Postalcode" : {
          "file" : "lib/Data/FormValidator/Constraints/Business/DK/Postalcode.pm",
-         "version" : "0.01"
+         "version" : "0.09"
       }
    },
    "release_status" : "stable",
@@ -64,7 +64,7 @@
       },
       "homepage" : "http://logicLAB.jira.com/browse/BDKPST",
       "license" : [
-         "http://opensource.org/licenses/artistic-license-2.0.php"
+         "http://www.perlfoundation.org/artistic_license_2_0"
       ],
       "repository" : {
          "url" : "https://github.com/jonasbn/bdkpst"
@@ -73,5 +73,5 @@
       "x_projectSite" : "http://logicLAB.jira.com/browse/BDKPST",
       "x_projectWiki" : "http://logiclab.jira.com/wiki/display/BDKPST/Home"
    },
-   "version" : "0.08"
+   "version" : "0.09"
 }

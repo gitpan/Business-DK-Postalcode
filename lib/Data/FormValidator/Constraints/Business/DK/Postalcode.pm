@@ -1,7 +1,5 @@
 package Data::FormValidator::Constraints::Business::DK::Postalcode;
 
-# $Id$
-
 use strict;
 use warnings;
 use vars qw(@ISA $VERSION @EXPORT_OK);
@@ -16,7 +14,7 @@ use base 'Exporter';
 
 use constant INVALID => undef;
 
-$VERSION = '0.01';
+our $VERSION = '0.09';
 
 sub postalcode {
     return sub {

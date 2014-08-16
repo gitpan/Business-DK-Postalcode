@@ -20,7 +20,7 @@ no strict 'refs';
 
 my $regex;
 
-our $VERSION = '0.08';
+our $VERSION = '0.09';
 our @EXPORT_OK
     = qw(get_all_postalcodes get_all_cities get_all_data create_regex validate_postalcode validate get_city_from_postalcode get_postalcode_from_city);
 
@@ -311,7 +311,7 @@ sub _build_tree {
 
 =head1 NAME
 
-Business::DK::Postalcode - validation of Danish postal codes
+Business::DK::Postalcode - validation and listing of Danish postal codes
 
 =head1 VERSION
 
@@ -355,9 +355,9 @@ This documentation describes version 0.08
     my $regex_ref = ${create_regex()};
 
     if ($postalcode =~ m/$regex/) {
-        print "We have a valid Danish postalcode\n";
+        print "We have a valid Danish postal code\n";
     } else {
-        warn "Not a valid Danish postalcode\n";
+        warn "Not a valid Danish postal code\n";
     }
 
 
@@ -374,7 +374,7 @@ This documentation describes version 0.08
 
     foreach (@{postalcodes}) {
         printf
-            'postalcode: %s city: %s street/desc: %s company: %s province: %d country: %d', split /\t/, $_, 6;
+            'postal code: %s city: %s street/desc: %s company: %s province: %d country: %d', split /\t/, $_, 6;
     }
 
 =head1 FEATURES
@@ -403,7 +403,7 @@ subroutines depending on your needs:
 
 =item * L</get_all_postalcodes>, to retrieve all postal codes
 
-=item * L</get_all_citites>, to retieve all cities
+=item * L</get_all_cities>, to retieve all cities
 
 =item * L</get_postalcode_from_city>, to retrieve one or more postal codes from a city name
 
@@ -419,11 +419,11 @@ details on the distribution of the data.
 
 =head3 city name
 
-A non-unique, case-sensite representation of a city name in Danish.
+A non-unique, case-sensitive representation of a city name in Danish.
 
 =head3 street/description
 
-This field is either a streetname or g a description, is it only provided for
+This field is either a streetname or a description, is it only provided for
 a few special records.
 
 =head3 company name
@@ -432,7 +432,7 @@ This field is only provided for a few special records.
 
 =head3 province
 
-This field is a bit special and it's use is expected to be related to ditribution
+This field is a bit special and it's use is expected to be related to distribution
 all entries inside Copenhagen are marked as 'False' in this column and 'True' for
 all entries outside Copenhagen - and this of course with exceptions. The data are
 included since they are a part of the original data.
@@ -569,9 +569,9 @@ Please note that city names are not unique, hence the possibility of a list of p
 
     my $postalcodes = get_postalcode_from_city($city);
 
-    if (scalar @{$cities} == 1) {
+    if (scalar @{$postalcodes} == 1) {
         print "$city is unique\n";
-    } elsif (scalar @{$cities} > 1) {
+    } elsif (scalar @{$postalcodes} > 1) {
         warn "$city is NOT unique\n";
     } else {
         die "$city not found\n";
@@ -633,7 +633,7 @@ This distribution requires no special configuration or environment.
 
 =back
 
-=head2 Test
+=head2 TEST
 
 Please note that the above list does not reflect requirements for:
 
